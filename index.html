@@ -125,51 +125,91 @@ C уважением,
 #icq-btn{position:fixed;bottom:24px;right:24px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;font-size:24px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(22,163,74,.5);z-index:99999;display:flex;align-items:center;justify-content:center;transition:.2s;}
 #icq-btn:hover{transform:scale(1.1);}
 #icq-badge{position:absolute;top:-3px;right:-3px;background:#ef4444;color:#fff;border-radius:50%;width:17px;height:17px;font-size:10px;display:none;align-items:center;justify-content:center;font-weight:700;}
-#icq-panel{position:fixed;bottom:90px;right:24px;width:320px;height:460px;background:#fff;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.2);z-index:99998;display:none;flex-direction:column;overflow:hidden;border:1px solid #e5e7eb;}
-#icq-head{padding:12px 16px;background:linear-gradient(90deg,#16a34a,#22c55e);color:#fff;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-#icq-head span{font-size:14px;font-weight:700;}
-#icq-head button{background:none;border:none;color:#fff;font-size:20px;cursor:pointer;}
-#icq-tabs{display:flex;gap:4px;padding:8px 10px;border-bottom:1px solid #f3f4f6;flex-shrink:0;overflow-x:auto;}
+#icq-panel{position:fixed;bottom:90px;right:24px;width:360px;height:520px;background:#fff;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.2);z-index:99998;display:none;flex-direction:column;overflow:hidden;border:1px solid #e5e7eb;transition:border-radius .2s;}
+#icq-panel.fullscreen{top:0!important;left:0!important;right:0!important;bottom:0!important;width:100%!important;height:100%!important;border-radius:0!important;}
+#icq-panel.mini{width:220px!important;height:44px!important;overflow:hidden;border-radius:22px!important;}
+#icq-panel.mini #icq-tabs,#icq-panel.mini #icq-msgs,#icq-panel.mini #icq-emoji-bar,#icq-panel.mini #icq-row{display:none!important;}
+#icq-head{padding:10px 14px;background:linear-gradient(90deg,#16a34a,#22c55e);color:#fff;display:flex;align-items:center;gap:6px;flex-shrink:0;cursor:move;user-select:none;}
+#icq-head-title{font-size:13px;font-weight:700;flex:1;}
+#icq-head-btns{display:flex;gap:4px;}
+#icq-head-btns button{background:rgba(255,255,255,.25);border:none;color:#fff;font-size:13px;cursor:pointer;border-radius:6px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;}
+#icq-head-btns button:hover{background:rgba(255,255,255,.4);}
+#icq-tabs{display:flex;gap:3px;padding:7px 10px;border-bottom:1px solid #f3f4f6;flex-shrink:0;overflow-x:auto;}
 .icq-tab{padding:4px 9px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;border:none;background:#f3f4f6;color:#6b7280;}
 .icq-tab.active{background:#16a34a;color:#fff;}
 #icq-msgs{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:5px;}
-.icq-msg{max-width:82%;padding:7px 10px;border-radius:11px;font-size:12px;line-height:1.45;word-break:break-word;}
+.icq-msg{max-width:82%;padding:7px 10px;border-radius:11px;font-size:12px;line-height:1.5;word-break:break-word;}
 .icq-me{background:#16a34a;color:#fff;align-self:flex-end;border-bottom-right-radius:3px;}
 .icq-other{background:#f3f4f6;color:#111;align-self:flex-start;border-bottom-left-radius:3px;}
 .icq-bot{background:#eff6ff;color:#1e40af;align-self:flex-start;border-left:3px solid #3b82f6;border-radius:8px;}
 .icq-meta{font-size:10px;opacity:.6;margin-top:2px;}
-#icq-row{display:flex;gap:6px;padding:8px 10px;border-top:1px solid #f3f4f6;flex-shrink:0;}
+#icq-emoji-bar{display:none;flex-wrap:wrap;gap:2px;padding:6px 10px;border-top:1px solid #f3f4f6;background:#fafafa;max-height:96px;overflow-y:auto;flex-shrink:0;}
+#icq-emoji-bar span{font-size:20px;cursor:pointer;padding:2px;border-radius:4px;}
+#icq-emoji-bar span:hover{background:#e5e7eb;}
+#icq-row{display:flex;gap:6px;padding:8px 10px;border-top:1px solid #f3f4f6;flex-shrink:0;align-items:center;}
 #icq-inp{flex:1;border:1px solid #e5e7eb;border-radius:10px;padding:7px 10px;font-size:12px;outline:none;font-family:inherit;}
+#icq-emoji-btn{background:none;border:none;font-size:20px;cursor:pointer;padding:0;}
 #icq-go{background:#16a34a;color:#fff;border:none;border-radius:10px;padding:7px 12px;font-size:14px;cursor:pointer;}
 </style>
+
 <button id="icq-btn" title="Чат" onclick="ICQ.toggle()">&#x1F4AC;<span id="icq-badge"></span></button>
+
 <div id="icq-panel">
   <div id="icq-head">
-    <span>&#x1F4AC; Чат Сделка CRM</span>
-    <button onclick="ICQ.toggle()">&#x2715;</button>
+    <span>&#x1F4AC;</span>
+    <span id="icq-head-title">Чат Сделка CRM</span>
+    <div id="icq-head-btns">
+      <button onclick="ICQ.setMini()" title="Мини">&#x2212;</button>
+      <button onclick="ICQ.setFull()" title="На весь экран">&#x26F6;</button>
+      <button onclick="ICQ.setNormal()" title="Обычный">&#x2B1C;</button>
+      <button onclick="ICQ.toggle()" title="Закрыть">&#x2715;</button>
+    </div>
   </div>
   <div id="icq-tabs"></div>
   <div id="icq-msgs"></div>
+  <div id="icq-emoji-bar"></div>
   <div id="icq-row">
-    <input id="icq-inp" placeholder="Сообщение...">
+    <button id="icq-emoji-btn" onclick="ICQ.toggleEmoji()" title="Смайлики">&#x1F60A;</button>
+    <input id="icq-inp" placeholder="Сообщение... (/статус /итог /помощь)">
     <button id="icq-go">&#x27A4;</button>
   </div>
 </div>
+
 <script>
 var ICQ=(function(){
 var CH=['general','sales','logistics','accounting'];
-var LB={general:'Общий',sales:'Продажи',logistics:'Логистика',accounting:'Бухгалтерия'};
-var BOT={'/статус':'Открыто: 12 | Закрыто: 8 | Просрочено: 2','/итог':'Выручка за месяц: 3 240 000 ₽ (95% плана)','/помощь':'Команды: /статус /итог'};
-var cur='general',isOpen=false;
+var LB={general:'💬 Общий',sales:'💰 Продажи',logistics:'🚚 Логист.',accounting:'📊 Бухгалт.'};
+var BOT={'/статус':'📊 Открыто: 12 | Закрыто: 8 | Просрочено: 2','/итог':'💰 Выручка за месяц: 3 240 000 ₽ (95% плана)','/помощь':'ℹ️ Команды: /статус /итог'};
+var EMOJIS=['😀','😂','😍','👍','🔥','🎉','🚀','✅','❌','⚠️','💰','💳','📊','📅','📦','🚗','📞','📬','🔔','❤️','🤝','💪','🌟','⏰','💡','🔧','📈','📉','🏆','🙏','😎','🤔','😅','🥳','🫡'];
+var cur='general',isOpen=false,emojiOpen=false,mode='normal';
 var me=localStorage.getItem('icq_name')||'Я';
 var DEMO={
-  general:[{n:'Юлия',t:'Всем доброе утро! 🌞',ts:'09:00'},{n:'Менеджер',t:'Доброе! Готов к работе',ts:'09:02'}],
-  sales:[{n:'Алексей',t:'Закрыли сделку на 500к! 🎉',ts:'10:15'}],
-  logistics:[{n:'Сергей',t:'Отгрузка №42 подтверждена',ts:'11:00'}],
-  accounting:[{n:'Бухгалтер',t:'Акты за сентябрь готовы',ts:'08:45'}]
+  general:[{n:'Юлия',t:'Всем доброе утро! 🌞',ts:'09:00'},{n:'Менеджер',t:'Доброе! Готов к работе 👍',ts:'09:02'}],
+  sales:[{n:'Алексей',t:'Закрыли сделку на 500к! 🎉🔥',ts:'10:15'}],
+  logistics:[{n:'Сергей',t:'Отгрузка №42 подтверждена ✅',ts:'11:00'}],
+  accounting:[{n:'Бухгалтер',t:'Акты за сентябрь готовы 👍',ts:'08:45'}]
 };
+
+// ICQ-style sound
+function icqSound(hi){
+  try{
+    var ctx=new(window.AudioContext||window.webkitAudioContext)();
+    function beep(f,s,d){
+      var o=ctx.createOscillator(),g=ctx.createGain();
+      o.type='sine';o.frequency.value=f;
+      g.gain.setValueAtTime(0.25,ctx.currentTime+s);
+      g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+s+d);
+      o.connect(g);g.connect(ctx.destination);
+      o.start(ctx.currentTime+s);o.stop(ctx.currentTime+s+d);
+    }
+    if(hi){beep(880,0,.12);beep(1100,.13,.1);}
+    else{beep(660,0,.1);beep(440,.11,.15);}
+  }catch(e){}
+}
+
 function ld(ch){try{return JSON.parse(localStorage.getItem('icq_'+ch)||'[]')}catch(e){return[];}}
-function sv(ch,m){localStorage.setItem('icq_'+ch,JSON.stringify(m.slice(-100)));}
+function sv(ch,m){localStorage.setItem('icq_'+ch,JSON.stringify(m.slice(-200)));}
+
 function tabs(){
   var el=document.getElementById('icq-tabs'),h='';
   for(var i=0;i<CH.length;i++){
@@ -179,47 +219,160 @@ function tabs(){
   el.innerHTML=h;
   var bs=el.querySelectorAll('button');
   for(var j=0;j<bs.length;j++){
-    (function(b){b.onclick=function(){cur=b.getAttribute('data-c');tabs();msgs();};})(bs[j]);
+    (function(b){b.onclick=function(){cur=b.getAttribute('data-c');tabs();renderMsgs();};})(bs[j]);
   }
 }
-function msgs(){
+
+function renderMsgs(){
   var m=ld(cur),el=document.getElementById('icq-msgs'),h='';
   for(var i=0;i<m.length;i++){
     var x=m[i];
     var cls=x.bot?'icq-msg icq-bot':(x.n===me?'icq-msg icq-me':'icq-msg icq-other');
-    var pre=x.bot?'🤖 Бот: ':(x.n!==me?'<b>'+x.n+'</b>: ':'');
+    var pre=x.bot?'🤖 Бот: ':(x.n!==me?'<b>'+x.n+'</b> ':'');
     h+='<div class="'+cls+'">'+pre+x.t+'<div class="icq-meta">'+x.ts+'</div></div>';
   }
   el.innerHTML=h;
   el.scrollTop=el.scrollHeight;
 }
+
+function renderEmojis(){
+  var el=document.getElementById('icq-emoji-bar');
+  el.innerHTML=EMOJIS.map(function(e){
+    return '<span onclick="ICQ.insertEmoji(\"'+e+'\"")>'+e+'</span>';
+  }).join('');
+}
+
 function send(){
   var inp=document.getElementById('icq-inp'),txt=inp.value.trim();
   if(!txt)return;
-  if(me==='Я'){var n=prompt('Ваше имя:','Менеджер');if(n){me=n;localStorage.setItem('icq_name',n);}}
+  if(me==='Я'){var n=prompt('Ваше имя в чате:','Менеджер');if(n){me=n;localStorage.setItem('icq_name',n);}}
   inp.value='';
   var ts=new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
   var m=ld(cur);
   m.push({n:me,t:txt,ts:ts});
   if(BOT[txt])m.push({n:'Bot',t:BOT[txt],ts:ts,bot:true});
-  sv(cur,m);msgs();
+  sv(cur,m);
+  renderMsgs();
+  icqSound(true);
 }
+
+function applyMode(){
+  var p=document.getElementById('icq-panel');
+  p.classList.remove('fullscreen','mini');
+  if(mode==='full')p.classList.add('fullscreen');
+  if(mode==='mini')p.classList.add('mini');
+  if(mode==='normal'){p.style.width='360px';p.style.height='520px';}
+}
+
+function setFull(){mode='full';applyMode();}
+function setMini(){mode='mini';applyMode();}
+function setNormal(){mode='normal';applyMode();}
+
 function toggle(){
   isOpen=!isOpen;
   var p=document.getElementById('icq-panel');
   p.style.display=isOpen?'flex':'none';
-  if(isOpen){tabs();msgs();setTimeout(function(){document.getElementById('icq-inp').focus();},50);}
+  if(isOpen){
+    renderEmojis();
+    tabs();
+    renderMsgs();
+    var b=document.getElementById('icq-badge');
+    b.style.display='none';
+    if(mode==='mini')mode='normal';
+    applyMode();
+    setTimeout(function(){document.getElementById('icq-inp').focus();},50);
+  }
 }
+
+function toggleEmoji(){
+  emojiOpen=!emojiOpen;
+  document.getElementById('icq-emoji-bar').style.display=emojiOpen?'flex':'none';
+}
+
+function insertEmoji(e){
+  var inp=document.getElementById('icq-inp');
+  inp.value+=e;inp.focus();
+}
+
+// Drag
+function initDrag(){
+  var head=document.getElementById('icq-head');
+  var panel=document.getElementById('icq-panel');
+  var dx=0,dy=0,startX=0,startY=0,dragging=false;
+  head.addEventListener('mousedown',function(e){
+    var p=document.getElementById('icq-panel');
+    if(p.classList.contains('fullscreen'))return;
+    dragging=true;
+    startX=e.clientX-p.offsetLeft;
+    startY=e.clientY-p.offsetTop;
+    p.style.transition='none';
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove',function(e){
+    if(!dragging)return;
+    var p=document.getElementById('icq-panel');
+    var nx=e.clientX-startX, ny=e.clientY-startY;
+    nx=Math.max(0,Math.min(nx,window.innerWidth-p.offsetWidth));
+    ny=Math.max(0,Math.min(ny,window.innerHeight-p.offsetHeight));
+    p.style.left=nx+'px';
+    p.style.top=ny+'px';
+    p.style.right='auto';
+    p.style.bottom='auto';
+  });
+  document.addEventListener('mouseup',function(){dragging=false;});
+  // Touch drag
+  head.addEventListener('touchstart',function(e){
+    var p=document.getElementById('icq-panel');
+    if(p.classList.contains('fullscreen'))return;
+    var t=e.touches[0];
+    startX=t.clientX-p.offsetLeft;
+    startY=t.clientY-p.offsetTop;
+    dragging=true;
+  },{passive:true});
+  document.addEventListener('touchmove',function(e){
+    if(!dragging)return;
+    var p=document.getElementById('icq-panel');
+    var t=e.touches[0];
+    var nx=t.clientX-startX, ny=t.clientY-startY;
+    nx=Math.max(0,Math.min(nx,window.innerWidth-p.offsetWidth));
+    ny=Math.max(0,Math.min(ny,window.innerHeight-p.offsetHeight));
+    p.style.left=nx+'px';
+    p.style.top=ny+'px';
+    p.style.right='auto';
+    p.style.bottom='auto';
+  },{passive:true});
+  document.addEventListener('touchend',function(){dragging=false;});
+}
+
+// Inject menu item
+function injectMenu(){
+  var nav=document.querySelector('nav ul, aside ul, [class*=sidebar] ul, [class*=menu] ul');
+  if(!nav){var li=document.querySelector('nav li,aside li');if(li)nav=li.parentNode;}
+  if(nav){
+    var item=document.createElement('li');
+    item.style.cssText='list-style:none';
+    item.innerHTML='<a href="#" onclick="event.preventDefault();ICQ.toggle()" style="display:flex;align-items:center;gap:8px;padding:8px 16px;text-decoration:none;color:inherit;font-size:13px;"><span>💬</span><span>Чат</span></a>';
+    nav.appendChild(item);
+  }
+}
+
 function init(){
   CH.forEach(function(c){if(!ld(c).length)sv(c,DEMO[c]||[]);});
   document.getElementById('icq-go').onclick=send;
   document.getElementById('icq-inp').onkeydown=function(e){if(e.key==='Enter')send();};
+  initDrag();
+  injectMenu();
   setTimeout(function(){
-    if(!isOpen){var b=document.getElementById('icq-badge');b.textContent='1';b.style.display='flex';}
-  },5000);
+    if(!isOpen){
+      var b=document.getElementById('icq-badge');
+      b.textContent='3';b.style.display='flex';
+      icqSound(false);
+    }
+  },4000);
 }
+
 document.addEventListener('DOMContentLoaded',init);
-return{toggle:toggle};
+return{toggle:toggle,toggleEmoji:toggleEmoji,insertEmoji:insertEmoji,setFull:setFull,setMini:setMini,setNormal:setNormal};
 })();
 </script>
 </body>
